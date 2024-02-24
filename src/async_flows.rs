@@ -21,11 +21,11 @@ pub async fn handle_flow(
     // https://doc.rust-lang.org/std/os/fd/trait.FromRawFd.html
     // https://doc.rust-lang.org/nightly/std/os/fd/type.RawFd.html
 
-    let iffd = iffile.as_raw_fd();
-    let dupfd = unsafe { filedesc::FileDesc::duplicate_raw_fd(iffd).unwrap() };
-    let mut out_iffile = unsafe { 
-        std::fs::File::from_raw_fd(dupfd.as_raw_fd())
-    };
+//    let iffd = iffile.as_raw_fd();
+//    let dupfd = unsafe { filedesc::FileDesc::duplicate_raw_fd(iffd).unwrap() };
+//    let mut out_iffile = unsafe { 
+//        std::fs::File::from_raw_fd(dupfd.as_raw_fd())
+//    };
     // let mut out_iffile = unsafe { 
     //     std::fs::File::from_raw_fd(
     //         filedesc::FileDesc::duplicate_raw_fd(
@@ -99,7 +99,7 @@ pub async fn handle_flow(
                             stream_buf.read_exact(&mut tcpbuf[..(pkt_len as usize)]).await.unwrap();
                             // write to interface
                             eprintln!("out_iffile.write of {} bytes", pkt_len);
-                            match out_iffile.write(&tcpbuf[0..(pkt_len as usize)]) {
+                            match iffile.write(&tcpbuf[0..(pkt_len as usize)]).await {
                                 Ok(_) => {
                                     eprintln!("\tOK!");
                                     ()
