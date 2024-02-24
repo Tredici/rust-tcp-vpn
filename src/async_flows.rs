@@ -42,6 +42,7 @@ pub async fn handle_flow(
     let mut counter: u64 = 0;
     let mut stream_buf = tokio::io::BufWriter::with_capacity(MAX_HEADER_SZ + DEF_BUF_SZ, stream);
     'outer: loop {
+        std::io::stdout().flush().unwrap();
         tokio::select! {
             // signal
             _ = sigint.recv() => {
@@ -60,6 +61,7 @@ pub async fn handle_flow(
             n = iffile.read(&mut filebuf[..]) => {
                 eprintln!("Read data from interface");
                 if let Ok(sz) = n {
+                    eprintln!("Read n = {} bytes", sz);
                     counter += 1;
                     // build exit packet
                     // pkt type = 2
@@ -96,7 +98,7 @@ pub async fn handle_flow(
                             // read data
                             stream_buf.read_exact(&mut tcpbuf[..(pkt_len as usize)]).await.unwrap();
                             // write to interface
-                            eprintln!("out_iffile.write");
+                            eprintln!("out_iffile.write of {} bytes", pkt_len);
                             match out_iffile.write(&tcpbuf[0..(pkt_len as usize)]) {
                                 Ok(_) => {
                                     eprintln!("\tOK!");
