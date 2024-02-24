@@ -4,6 +4,7 @@ pub mod client;
 pub mod parsing;
 pub mod handshake;
 pub mod server;
+pub mod async_flows;
 pub mod flows;
 pub mod tunif;
 
