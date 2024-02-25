@@ -40,6 +40,7 @@ pub fn execute_client(ifname: String, ifaddr: IpAddr, netmask: u8, remote: std::
     let rt = Builder::new_multi_thread().enable_all().build().unwrap();
     let fut = async move {
         let mut sigint = signal(SignalKind::interrupt()).unwrap();
+        stream.set_nonblocking(true).unwrap();
         let mut stream = tokio::net::TcpStream::from_std(stream).unwrap();
         let mut iffile = tokio::fs::File::from_std(iffile);
         async_flows::handle_flow(&mut stream, &mut iffile, &mut sigint).await;
